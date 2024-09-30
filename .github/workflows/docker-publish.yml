@@ -1,0 +1,33 @@
+name: Build and Push Docker Image
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Download Chrome-Linux
+      run: |
+        wget https://commondatastorage.googleapis.com/chromium-browser-snapshots/Linux_x64/1361572/chrome-linux.zip
+        unzip chrome-linux.zip -d chrome-linux
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '16'
+
+    - name: Build Docker image
+      run: docker build -t luo-api .
+
+    - name: Log in to GitHub Container Registry
+      run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+    - name: Push Docker image to GHCR
+      run: docker push ghcr.io/${{ github.repository }}/luo-api:latest
