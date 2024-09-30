@@ -10,7 +10,7 @@ COPY package*.json ./
 # COPY pnpm-lock.yaml ./
 
 # 安装依赖
-RUN npm install --registry=https://registry.npmmirror.com
+RUN npm install
 # 或者如果使用 pnpm
 # RUN npm install -g pnpm && pnpm install
 
