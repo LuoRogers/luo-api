@@ -22,9 +22,6 @@ RUN npm run build
 # 或者如果使用 pnpm
 # RUN pnpm build
 
-# 复制 chrome 到镜像的工作目录
-COPY chrome-linux ./
-
 # 公开端口
 EXPOSE 3000
 

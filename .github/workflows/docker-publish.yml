@@ -13,11 +13,6 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v2
 
-    - name: Download Chrome-Linux
-      run: |
-        wget https://commondatastorage.googleapis.com/chromium-browser-snapshots/Linux_x64/1361572/chrome-linux.zip
-        unzip chrome-linux.zip -d chrome-linux
-
     - name: Set up Node.js
       uses: actions/setup-node@v2
       with:
