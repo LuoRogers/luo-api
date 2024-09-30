@@ -2,8 +2,10 @@ name: Build and Push Docker Image
 
 on:
   push:
+    tags:
+      - 'v*.*.*'  # 仅在标签为 vX.X.X 时触发
     branches:
-      - main
+      - dev  # dev 分支依然触发
 
 jobs:
   build:
@@ -27,5 +29,10 @@ jobs:
     - name: Convert repository name to lowercase and Push Docker image to GHCR
       run: |
         LOWERCASE_REPO=$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
-        docker tag luo-api ghcr.io/$LOWERCASE_REPO:latest
-        docker push ghcr.io/$LOWERCASE_REPO:latest
+        if [[ "${{ github.ref }}" == "refs/heads/dev" ]]; then
+          TAG="dev"
+        else
+          TAG="${GITHUB_REF#refs/tags/}"  # 获取标签名
+        fi
+        docker tag luo-api ghcr.io/$LOWERCASE_REPO:$TAG
+        docker push ghcr.io/$LOWERCASE_REPO:$TAG
