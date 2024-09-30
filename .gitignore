@@ -1,0 +1,49 @@
+# Node.js dependencies
+node_modules/
+pnpm-lock.yaml
+package-lock.json
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Build output
+dist/
+build/
+out/
+coverage/
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# IDE and editor folders
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+# Operating system files
+.DS_Store
+Thumbs.db
+
+# Docker files
+*.tar
+*.tar.gz
+Dockerfile
+docker-compose.yml
+
+# Puppeteer downloads
+.puppeteer/
+
+# Miscellaneous
+*.pem
+*.pfx
+*.p12
+
+# chrome-linux
+chrome-linux/
