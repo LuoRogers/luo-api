@@ -3,7 +3,7 @@ name: Build and Push Docker Image
 on:
   push:
     tags:
-      - 'v*.*.*'  # 仅在标签为 vX.X.X 时触发
+      - '*.*.*'  # 仅在标签为 X.X.X 时触发
     branches:
       - dev  # dev 分支依然触发
 
