@@ -1,0 +1,10 @@
+services:
+  app:
+    image: ghcr.io/luorogers/luo-api
+    env_file:
+      - ./luoapi/.env
+    networks:
+      - host
+
+command:
+  - npm run start
