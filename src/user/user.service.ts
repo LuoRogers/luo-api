@@ -29,12 +29,30 @@ export class UserService {
     return await this.userModel.findAll();
   }
 
-  async login(email: string, password: string): Promise<User> {
-    const user = await this.userModel.findOne({ where: { email } });
+  generateToken(userId: number): string {
+    const token = require('crypto').randomBytes(20).toString('hex');
+    console.log(token);
+    this.cacheManager.set(token, userId, 300000 ); // 缓存token 1小时
+    return token;
+  }
+
+  async login(email: string, password: string): Promise<any> {
+    const user = await User.findOne({ where: { email } });
+    // const user = await this.userModel.findOne({ where: { email } });
     if (user && await bcrypt.compare(password, user.password)) {
-      return user; // 密码匹配
+      const token = this.generateToken(user.id); // 生成token
+      return { ...user.toJSON(), token }; // 返回用户信息和token
     }
     throw new HttpException('登录失败', HttpStatus.UNAUTHORIZED);
-    return null; // 密码不匹配
   }
+
+  async detail(token: string): Promise<User> {
+    console.log(token);
+    const userId:number = await this.cacheManager.get(token); // 从缓存中获取用户信息
+    if (userId) {
+      return await this.userModel.findByPk(userId);
+    }
+    throw new HttpException('未登录', HttpStatus.UNAUTHORIZED);
+  }
+  
 }

@@ -1,7 +1,8 @@
-import { Column, Model, Table } from 'sequelize-typescript';
+import { Column, DefaultScope, Model, Table } from 'sequelize-typescript';
 
-@Table
+@Table({ tableName: 't_user', comment: '用户表' })
 export class User extends Model<User> {
+
   @Column
   username: string;
 
