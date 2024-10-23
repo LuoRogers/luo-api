@@ -1,0 +1,53 @@
+name: Build and Push Docker Image
+
+on:
+  push:
+    tags:
+      - '*.*.*'  # 仅在标签为 X.X.X 时触发
+    branches:
+      - dev  # dev 分支依然触发
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    env:
+      DOCKER_IMAGE_NAME: "luo-api"  # 定义 Docker 镜像名称为变量
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '20'
+
+    - name: Build Docker image
+      run: docker build -t ${{ env.DOCKER_IMAGE_NAME }} .
+
+    # 登录 GitHub Container Registry (GHCR)
+    - name: Log in to GitHub Container Registry
+      run: echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+    # 登录 Coding 镜像仓库
+    - name: Log in to Coding Docker Registry
+      run: docker login -u ${{ secrets.CODING_USERNAME }} -p ${{ secrets.CODING_TOKEN }} rogers-docker.pkg.coding.net
+
+    # 推送 Docker 镜像到 GHCR 和 Coding
+    - name: Tag and Push Docker image to registries
+      run: |
+        LOWERCASE_REPO=$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
+        if [[ "${{ github.ref }}" == "refs/heads/dev" ]]; then
+          TAG="dev"
+        else
+          TAG="${GITHUB_REF#refs/tags/}"  # 获取标签名
+        fi
+
+        # 推送到 GitHub Container Registry
+        docker tag ${{ env.DOCKER_IMAGE_NAME }} ghcr.io/$LOWERCASE_REPO:$TAG
+        docker push ghcr.io/$LOWERCASE_REPO:$TAG
+
+        # 推送到 Coding 镜像仓库
+        docker tag ${{ env.DOCKER_IMAGE_NAME }} rogers-docker.pkg.coding.net/luo/docker/${{ env.DOCKER_IMAGE_NAME }}:$TAG
+        docker push rogers-docker.pkg.coding.net/luo/docker/${{ env.DOCKER_IMAGE_NAME }}:$TAG
